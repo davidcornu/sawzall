@@ -1,0 +1,13 @@
+[package]
+name = "sawzall"
+version = "0.1.0"
+edition = "2021"
+authors = ["David Cornu <me@davidcornu.com>"]
+license = "MIT"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+magnus = { version = "0.7.1" }
