@@ -75,11 +75,11 @@ RSpec.describe Sawzall do
         expect(selection).to be_empty
       end
 
-      skip "raises an error if the selector is invalid" do
+      it "raises an error if the selector is invalid" do
         doc = Sawzall.parse_fragment("")
 
-        expect { doc.select("][") }
-          .to raise_error("asdasda")
+        expect { doc.select("div[]") }
+          .to raise_error(ArgumentError, /failed to parse selector "div\[\]"/)
       end
     end
   end

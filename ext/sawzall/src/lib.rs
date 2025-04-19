@@ -39,9 +39,17 @@ impl Document {
     }
 
     fn select(&self, selectors: String) -> Result<RArray, Error> {
-        let selector = Selector::parse(&selectors).unwrap();
+        let ruby = Ruby::get().expect("called from non-ruby thread");
+
+        let selector = Selector::parse(&selectors).map_err(|e| {
+            Error::new(
+                ruby.exception_arg_error(),
+                format!("failed to parse selector {selectors:?}\n{e}"),
+            )
+        })?;
+
         let rarray = RArray::new();
-        let html = self.0.lock().unwrap();
+        let html = self.0.lock().expect("failed to lock mutex");
 
         for element_ref in html.select(&selector) {
             let node = Node {
@@ -66,7 +74,7 @@ impl Node {
     where
         F: FnOnce(ElementRef) -> U,
     {
-        let html = self.document.0.lock().unwrap();
+        let html = self.document.0.lock().expect("failed to lock mutex");
 
         html.tree.get(self.id).and_then(ElementRef::wrap).map(f)
     }
