@@ -38,29 +38,45 @@ impl Document {
         Self(Arc::new(Mutex::new(html)))
     }
 
-    fn select(&self, selectors: String) -> Result<RArray, Error> {
-        let ruby = Ruby::get().expect("called from non-ruby thread");
-
-        let selector = Selector::parse(&selectors).map_err(|e| {
-            Error::new(
-                ruby.exception_arg_error(),
-                format!("failed to parse selector {selectors:?}\n{e}"),
-            )
-        })?;
-
-        let rarray = RArray::new();
+    fn with_locked_html<U, F>(&self, f: F) -> U
+    where
+        F: FnOnce(&Html) -> U,
+    {
         let html = self.0.lock().expect("failed to lock mutex");
 
-        for element_ref in html.select(&selector) {
-            let node = Node {
-                id: element_ref.id(),
-                document: self.clone(),
-            };
-            rarray.push(node)?;
-        }
-
-        Ok(rarray)
+        f(&html)
     }
+
+    fn select(&self, css_selector: String) -> Result<RArray, Error> {
+        self.with_locked_html(|html| select(css_selector, self.clone(), html.root_element()))
+    }
+}
+
+fn select(
+    css_selector: String,
+    document: Document,
+    element_ref: ElementRef,
+) -> Result<RArray, Error> {
+    let ruby = Ruby::get().expect("called from non-ruby thread");
+
+    let selector = Selector::parse(&css_selector).map_err(|e| {
+        Error::new(
+            ruby.exception_arg_error(),
+            format!("failed to parse selector {css_selector:?}\n{e}"),
+        )
+    })?;
+
+    let rarray = RArray::new();
+
+    for element_ref in element_ref.select(&selector) {
+        let node = Node {
+            id: element_ref.id(),
+            document: document.clone(),
+        };
+        rarray.push(node)?;
+    }
+
+    Ok(rarray)
 }
 
 #[magnus::wrap(class = "Sawzall::Node", free_immediately)]
