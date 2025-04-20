@@ -82,6 +82,17 @@ RSpec.describe Sawzall do
           .to raise_error(ArgumentError, /failed to parse selector "div\[\]"/)
       end
     end
+
+    describe "#root_element" do
+      it "returns the root node" do
+        doc = Sawzall.parse_fragment("<h1>Heading</h1>")
+        node = doc.root_element
+
+        expect(node).to be_a(Sawzall::Node)
+        expect(node.name).to eq("html")
+        expect(node.html).to eq("<html><h1>Heading</h1></html>")
+      end
+    end
   end
 
   describe Sawzall::Node do

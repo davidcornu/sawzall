@@ -11,6 +11,7 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
 
     let document_class = module.define_class("Document", ruby.class_object())?;
     document_class.define_method("select", method!(Document::select, 1))?;
+    document_class.define_method("root_element", method!(Document::root_element, 0))?;
 
     let node_class = module.define_class("Node", ruby.class_object())?;
     node_class.define_method("name", method!(Node::name, 0))?;
@@ -49,6 +50,13 @@ impl Document {
 
     fn select(&self, css_selector: String) -> Result<RArray, Error> {
         self.with_locked_html(|html| select(css_selector, self.clone(), html.root_element()))
+    }
+
+    fn root_element(&self) -> Node {
+        self.with_locked_html(|html| Node {
+            id: html.root_element().id(),
+            document: self.clone(),
+        })
     }
 }
 
