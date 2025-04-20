@@ -19,6 +19,7 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     element_class.define_method("inner_html", method!(Element::inner_html, 0))?;
     element_class.define_method("attr", method!(Element::attr, 1))?;
     element_class.define_method("select", method!(Element::select, 1))?;
+    element_class.define_method("child_elements", method!(Element::child_elements, 0))?;
 
     Ok(())
 }
@@ -126,6 +127,18 @@ impl Element {
             select(css_selector, self.document.clone(), element_ref)
         })
     }
+
+    fn child_elements(&self) -> RArray {
+        self.with_element_ref(|element_ref| {
+            element_ref
+                .child_elements()
+                .map(|child_element_ref| Element {
+                    id: child_element_ref.id(),
+                    document: self.document.clone(),
+                })
+                .collect()
+        })
+    }
+
     // text
-    // children
 }

@@ -151,5 +151,33 @@ RSpec.describe Sawzall do
         expect(selection[0].inner_html).to eq("This is an HTML document")
       end
     end
+
+    describe "#child_elements" do
+      it "returns an array of child elements" do
+        doc = Sawzall.parse_fragment(<<~HTML)
+          <ul>
+            <li id="child1">One</li>
+            <li id="child2">
+              <ul id="grand-child1">
+                <li>Two</li>
+                <li>Three</li>
+              </ul>
+            </li>
+          </ul>
+        HTML
+
+        ul = doc.select("ul").first
+        children = ul.child_elements
+        expect(children).to all(be_a(Sawzall::Element))
+        expect(children.map { |c| c.attr("id") }).to eq(["child1", "child2"])
+        expect(children[1].child_elements.map { |c| c.attr("id") }).to eq(["grand-child1"])
+      end
+
+      it "returns an empty array if there are no child elements" do
+        doc = Sawzall.parse_fragment("<img src='https://example.com/image.png'/>")
+
+        expect(doc.select("img").first.child_elements).to be_empty
+      end
+    end
   end
 end
