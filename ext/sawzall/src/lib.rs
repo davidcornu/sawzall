@@ -18,6 +18,7 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     element_class.define_method("html", method!(Element::html, 0))?;
     element_class.define_method("inner_html", method!(Element::inner_html, 0))?;
     element_class.define_method("attr", method!(Element::attr, 1))?;
+    element_class.define_method("select", method!(Element::select, 1))?;
 
     Ok(())
 }
@@ -122,6 +123,12 @@ impl Element {
 
     fn attr(&self, attribute: String) -> Option<String> {
         self.with_element_ref(|element_ref| element_ref.attr(&attribute).map(ToString::to_string))
+    }
+
+    fn select(&self, css_selector: String) -> Result<RArray, Error> {
+        self.with_element_ref(|element_ref| {
+            select(css_selector, self.document.clone(), element_ref)
+        })
     }
     // text
     // children

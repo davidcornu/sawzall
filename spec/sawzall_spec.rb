@@ -139,5 +139,17 @@ RSpec.describe Sawzall do
         expect(doc.select("h1").first.attr("class")).to be_nil
       end
     end
+
+    describe "#select" do
+      it "returns elements that match the CSS selector" do
+        doc = Sawzall.parse_document(sample_document)
+
+        selection = doc.root_element.select("p")
+        expect(selection.size).to eq(1)
+        expect(selection[0]).to be_a(Sawzall::Element)
+        expect(selection[0].name).to eq("p")
+        expect(selection[0].inner_html).to eq("This is an HTML document")
+      end
+    end
   end
 end
