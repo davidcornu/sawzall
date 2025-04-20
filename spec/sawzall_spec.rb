@@ -45,12 +45,12 @@ RSpec.describe Sawzall do
 
   describe Sawzall::Document do
     describe "#select" do
-      it "returns nodes that match the CSS selector" do
+      it "returns elements that match the CSS selector" do
         doc = Sawzall.parse_document(sample_document)
 
         selection = doc.select("p")
         expect(selection.size).to eq(1)
-        expect(selection[0]).to be_a(Sawzall::Node)
+        expect(selection[0]).to be_a(Sawzall::Element)
         expect(selection[0].name).to eq("p")
         expect(selection[0].inner_html).to eq("This is an HTML document")
       end
@@ -68,7 +68,7 @@ RSpec.describe Sawzall do
         expect(selection.map(&:inner_html)).to eq(["One", "Two"])
       end
 
-      it "returns nothing if there are no matching nodes" do
+      it "returns nothing if there are no matching elements" do
         doc = Sawzall.parse_document(sample_document)
 
         selection = doc.select("table")
@@ -84,18 +84,18 @@ RSpec.describe Sawzall do
     end
 
     describe "#root_element" do
-      it "returns the root node" do
+      it "returns the root element" do
         doc = Sawzall.parse_fragment("<h1>Heading</h1>")
-        node = doc.root_element
+        element = doc.root_element
 
-        expect(node).to be_a(Sawzall::Node)
-        expect(node.name).to eq("html")
-        expect(node.html).to eq("<html><h1>Heading</h1></html>")
+        expect(element).to be_a(Sawzall::Element)
+        expect(element.name).to eq("html")
+        expect(element.html).to eq("<html><h1>Heading</h1></html>")
       end
     end
   end
 
-  describe Sawzall::Node do
+  describe Sawzall::Element do
     describe "#name" do
       it "returns the element's name" do
         doc = Sawzall.parse_fragment("<h1>Heading</h1>")

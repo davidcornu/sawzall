@@ -13,11 +13,11 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     document_class.define_method("select", method!(Document::select, 1))?;
     document_class.define_method("root_element", method!(Document::root_element, 0))?;
 
-    let node_class = module.define_class("Node", ruby.class_object())?;
-    node_class.define_method("name", method!(Node::name, 0))?;
-    node_class.define_method("html", method!(Node::html, 0))?;
-    node_class.define_method("inner_html", method!(Node::inner_html, 0))?;
-    node_class.define_method("attr", method!(Node::attr, 1))?;
+    let element_class = module.define_class("Element", ruby.class_object())?;
+    element_class.define_method("name", method!(Element::name, 0))?;
+    element_class.define_method("html", method!(Element::html, 0))?;
+    element_class.define_method("inner_html", method!(Element::inner_html, 0))?;
+    element_class.define_method("attr", method!(Element::attr, 1))?;
 
     Ok(())
 }
@@ -52,8 +52,8 @@ impl Document {
         self.with_locked_html(|html| select(css_selector, self.clone(), html.root_element()))
     }
 
-    fn root_element(&self) -> Node {
-        self.with_locked_html(|html| Node {
+    fn root_element(&self) -> Element {
+        self.with_locked_html(|html| Element {
             id: html.root_element().id(),
             document: self.clone(),
         })
@@ -77,23 +77,23 @@ fn select(
     let rarray = RArray::new();
 
     for element_ref in element_ref.select(&selector) {
-        let node = Node {
+        let element = Element {
             id: element_ref.id(),
             document: document.clone(),
         };
-        rarray.push(node)?;
+        rarray.push(element)?;
     }
 
     Ok(rarray)
 }
 
-#[magnus::wrap(class = "Sawzall::Node", free_immediately)]
-struct Node {
+#[magnus::wrap(class = "Sawzall::Element", free_immediately)]
+struct Element {
     id: NodeId,
     document: Document,
 }
 
-impl Node {
+impl Element {
     fn with_element_ref<U, F>(&self, f: F) -> U
     where
         F: FnOnce(ElementRef) -> U,
