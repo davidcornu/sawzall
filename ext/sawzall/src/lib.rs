@@ -75,17 +75,13 @@ fn select(
         )
     })?;
 
-    let rarray = RArray::new();
-
-    for element_ref in element_ref.select(&selector) {
-        let element = Element {
-            id: element_ref.id(),
+    Ok(element_ref
+        .select(&selector)
+        .map(|matching_element_ref| Element {
+            id: matching_element_ref.id(),
             document: document.clone(),
-        };
-        rarray.push(element)?;
-    }
-
-    Ok(rarray)
+        })
+        .collect())
 }
 
 #[magnus::wrap(class = "Sawzall::Element", free_immediately)]
