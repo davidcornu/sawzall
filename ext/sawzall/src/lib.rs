@@ -70,34 +70,35 @@ struct Node {
 }
 
 impl Node {
-    fn map_element_ref<U, F>(&self, f: F) -> Option<U>
+    fn with_element_ref<U, F>(&self, f: F) -> U
     where
         F: FnOnce(ElementRef) -> U,
     {
         let html = self.document.0.lock().expect("failed to lock mutex");
+        let element_ref = html
+            .tree
+            .get(self.id)
+            .and_then(ElementRef::wrap)
+            .expect("node with id {self.id} must be an element in the tree");
 
-        html.tree.get(self.id).and_then(ElementRef::wrap).map(f)
+        f(element_ref)
     }
 
-    fn name(&self) -> Option<String> {
-        self.map_element_ref(|element_ref| element_ref.value().name().to_string())
+    fn name(&self) -> String {
+        self.with_element_ref(|element_ref| element_ref.value().name().to_string())
     }
 
-    fn html(&self) -> Option<String> {
-        self.map_element_ref(|element_ref| element_ref.html())
+    fn html(&self) -> String {
+        self.with_element_ref(|element_ref| element_ref.html())
     }
 
-    fn inner_html(&self) -> Option<String> {
-        self.map_element_ref(|element_ref| element_ref.inner_html())
+    fn inner_html(&self) -> String {
+        self.with_element_ref(|element_ref| element_ref.inner_html())
     }
 
     fn attr(&self, attribute: String) -> Option<String> {
-        self.map_element_ref(|element_ref| element_ref.attr(&attribute).map(ToString::to_string))
-            .flatten()
+        self.with_element_ref(|element_ref| element_ref.attr(&attribute).map(ToString::to_string))
     }
-
-    // select
-    // attr
     // text
     // children
 }
