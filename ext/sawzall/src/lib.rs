@@ -1,3 +1,5 @@
+mod html_to_plain;
+
 use ego_tree::NodeId;
 use magnus::{function, method, prelude::*, Error, RArray, Ruby};
 use scraper::{ElementRef, Html, Selector};
@@ -20,6 +22,7 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     element_class.define_method("attr", method!(Element::attr, 1))?;
     element_class.define_method("select", method!(Element::select, 1))?;
     element_class.define_method("child_elements", method!(Element::child_elements, 0))?;
+    element_class.define_method("text", method!(Element::text, 0))?;
 
     Ok(())
 }
@@ -140,5 +143,7 @@ impl Element {
         })
     }
 
-    // text
+    fn text(&self) -> String {
+        self.with_element_ref(html_to_plain::html_to_plain)
+    }
 }

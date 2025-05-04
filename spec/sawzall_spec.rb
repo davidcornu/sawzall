@@ -179,5 +179,13 @@ RSpec.describe Sawzall do
         expect(doc.select("img").first.child_elements).to be_empty
       end
     end
+
+    describe "#text" do
+      it "returns the element's text content" do
+        doc = Sawzall.parse_fragment(sample_fragment)
+
+        expect(doc.root_element.text).to eq("Hello, world\n\nThis is an HTML fragment")
+      end
+    end
   end
 end
