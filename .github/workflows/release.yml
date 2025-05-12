@@ -77,7 +77,7 @@ jobs:
           path: ${{ steps.cross-gem.outputs.gem-path }}
 
   release:
-    needs: cross-gem
+    needs: ["source-gem", "cross-gem"]
     runs-on: ubuntu-latest
 
     permissions:
@@ -101,4 +101,4 @@ jobs:
       - uses: rubygems/configure-rubygems-credentials@main
       - name: Publish to RubyGems
         run: |
-          gem push pkg/
+          find pkg -name "*.gem" -exec gem push {} \;
