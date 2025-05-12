@@ -5,6 +5,7 @@ edition = "2021"
 authors = ["David Cornu <me@davidcornu.com>"]
 license = "MIT"
 publish = false
+rust-version = "1.75.0"
 
 [lib]
 crate-type = ["cdylib"]
