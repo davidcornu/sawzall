@@ -1,6 +1,7 @@
 use ego_tree::iter::Edge;
+use lazy_static::lazy_static;
 use scraper::{ElementRef, Node};
-use std::{collections::HashSet, sync::LazyLock};
+use std::collections::HashSet;
 
 /// Set of block-level elements extracted from [MDN][1]
 ///
@@ -41,8 +42,10 @@ const BLOCK_LEVEL_ELEMENTS: [&'static str; 33] = [
     "ul",
 ];
 
-static BLOCK_LEVEL_ELEMENTS_SET: LazyLock<HashSet<&'static str>> =
-    LazyLock::new(|| BLOCK_LEVEL_ELEMENTS.iter().map(|s| *s).collect());
+lazy_static! {
+    static ref BLOCK_LEVEL_ELEMENTS_SET: HashSet<&'static str> =
+        BLOCK_LEVEL_ELEMENTS.iter().map(|el| *el).collect();
+}
 
 fn is_block_element(name: &str) -> bool {
     BLOCK_LEVEL_ELEMENTS_SET.contains(&name)
