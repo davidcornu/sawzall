@@ -29,9 +29,22 @@ jobs:
         run: bundle exec rake
       - name: Run cargo test
         run: cargo test
+
+  docs:
+    runs-on: ubuntu-latest
+    name: Docs
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4.2"
+          bundler-cache: true
+      - name: Run YARD
+        run: bundle exec yard
       - name: Upload docs
         uses: actions/upload-pages-artifact@v3
         with:
-          path: doc
+          path: doc/
       - name: Deploy docs
         uses: actions/deploy-pages@v4
