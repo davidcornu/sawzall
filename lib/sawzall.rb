@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "sawzall/version"
-require_relative "sawzall/sawzall"
+require_relative "sawzall/extension"
 
 module Sawzall
   # Parses the given string as an HTML fragment
