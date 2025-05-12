@@ -1,55 +1,52 @@
 use ego_tree::iter::Edge;
 use lazy_static::lazy_static;
 use scraper::{ElementRef, Node};
-use std::collections::HashSet;
+use std::{collections::HashSet, sync::LazyLock};
 
-lazy_static! {
-    /// Set of block-level elements extracted from [MDN][1]
-    ///
-    /// [1]: https://developer.mozilla.org/en-US/docs/Web/HTML/Block-level_elements
-    static ref BLOCK_LEVEL_ELEMENTS: HashSet<&'static str> = {
-        [
-            "address",
-            "article",
-            "aside",
-            "blockquote",
-            "dd",
-            "details",
-            "dialog",
-            "div",
-            "dl",
-            "dt",
-            "fieldset",
-            "figcaption",
-            "figure",
-            "footer",
-            "form",
-            "h1",
-            "h2",
-            "h3",
-            "h4",
-            "h5",
-            "h6",
-            "header",
-            "hgroup",
-            "hr",
-            "li",
-            "main",
-            "nav",
-            "ol",
-            "p",
-            "pre",
-            "section",
-            "table",
-            "ul",
-        ]
-        .into_iter()
-        .collect()
-    };
-}
+/// Set of block-level elements extracted from [MDN][1]
+///
+/// [1]: https://developer.mozilla.org/en-US/docs/Web/HTML/Block-level_elements
+const BLOCK_LEVEL_ELEMENTS: [&'static str; 33] = [
+    "address",
+    "article",
+    "aside",
+    "blockquote",
+    "dd",
+    "details",
+    "dialog",
+    "div",
+    "dl",
+    "dt",
+    "fieldset",
+    "figcaption",
+    "figure",
+    "footer",
+    "form",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "header",
+    "hgroup",
+    "hr",
+    "li",
+    "main",
+    "nav",
+    "ol",
+    "p",
+    "pre",
+    "section",
+    "table",
+    "ul",
+];
+
+static BLOCK_LEVEL_ELEMENTS_SET: LazyLock<HashSet<&'static str>> =
+    LazyLock::new(|| BLOCK_LEVEL_ELEMENTS.iter().map(|s| *s).collect());
 
 fn is_block_element(name: &str) -> bool {
-    BLOCK_LEVEL_ELEMENTS.contains(name)
+    BLOCK_LEVEL_ELEMENTS.contains(&name)
 }
 
 enum Item<'a> {

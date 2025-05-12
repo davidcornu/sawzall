@@ -516,7 +516,6 @@ name = "sawzall"
 version = "0.1.0"
 dependencies = [
  "ego-tree",
- "lazy_static",
  "magnus",
  "scraper",
 ]
