@@ -20,4 +20,4 @@ RbSys::ExtensionTask.new("sawzall", GEMSPEC) do |ext|
 end
 
 task build: :compile
-task default: %i[compile spec yard:doctest yard standard]
+task default: %i[compile spec yard:doctest standard]
