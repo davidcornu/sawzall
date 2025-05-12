@@ -29,3 +29,9 @@ jobs:
         run: bundle exec rake
       - name: Run cargo test
         run: cargo test
+      - name: Upload docs
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: doc
+      - name: Deploy docs
+        uses: actions/deploy-pages@v4
