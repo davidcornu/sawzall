@@ -33,6 +33,15 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     name: Docs
+    needs: build
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - uses: actions/checkout@v4
