@@ -45,7 +45,7 @@ static BLOCK_LEVEL_ELEMENTS_SET: LazyLock<HashSet<&'static str>> =
     LazyLock::new(|| BLOCK_LEVEL_ELEMENTS.iter().map(|s| *s).collect());
 
 fn is_block_element(name: &str) -> bool {
-    BLOCK_LEVEL_ELEMENTS.contains(&name)
+    BLOCK_LEVEL_ELEMENTS_SET.contains(&name)
 }
 
 enum Item<'a> {
