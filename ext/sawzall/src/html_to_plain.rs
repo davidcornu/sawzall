@@ -1,5 +1,4 @@
 use ego_tree::iter::Edge;
-use lazy_static::lazy_static;
 use scraper::{ElementRef, Node};
 use std::{collections::HashSet, sync::LazyLock};
 
