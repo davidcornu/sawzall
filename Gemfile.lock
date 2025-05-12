@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    sawzall (0.1.0)
+    sawzall (0.1.0.pre)
       rb_sys (~> 0.9.91)
 
 GEM
