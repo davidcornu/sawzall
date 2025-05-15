@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require "pp"
+require "stringio"
+
 RSpec.describe Sawzall do
   it "has a version number" do
     expect(Sawzall::VERSION).not_to be nil
@@ -203,6 +206,46 @@ RSpec.describe Sawzall do
         doc = Sawzall.parse_fragment(sample_fragment)
 
         expect(doc.root_element.text).to eq("Hello, world\n\nThis is an HTML fragment")
+      end
+    end
+
+    describe "#inspect" do
+      it "returns a string containing the name and children" do
+        doc = Sawzall.parse_document(sample_document)
+
+        expect(doc.root_element.inspect).to eq(
+          "<Sawzall::Element name=\"html\" child_elements=[" \
+            "<Sawzall::Element name=\"head\" child_elements=[" \
+            "<Sawzall::Element name=\"title\" child_elements=[]>]>, "\
+            "<Sawzall::Element name=\"body\" child_elements=[" \
+            "<Sawzall::Element name=\"h1\" child_elements=[]>, " \
+            "<Sawzall::Element name=\"p\" child_elements=[]>]>]>"
+        )
+      end
+    end
+
+    describe "#pretty_print" do
+      it "returns a pretty-printed representation of the element" do
+        doc = Sawzall.parse_document(sample_document)
+        output = StringIO.new
+        PP.pp(doc.root_element, output)
+
+        expect(output.string).to eq(<<~TXT)
+          #(Sawzall::Element {
+            name = "html",
+            child_elements = [
+              #(Sawzall::Element {
+                name = "head",
+                child_elements = [ #(Sawzall::Element { name = "title" })]
+                }),
+              #(Sawzall::Element {
+                name = "body",
+                child_elements = [
+                  #(Sawzall::Element { name = "h1" }),
+                  #(Sawzall::Element { name = "p" })]
+                })]
+            })
+        TXT
       end
     end
   end
