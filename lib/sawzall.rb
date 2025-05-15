@@ -124,6 +124,16 @@ module Sawzall
   #     # @param attribute [String]
   #     # @return [String, Nil]
   #
+  #     # Returns the element's attributes as an array of key-value pairs
+  #     #
+  #     # @example
+  #     #   doc = Sawzall.parse_fragment("<h1 id='title' class='big'>Heading</h1>")
+  #     #   h1 = doc.select("h1").first
+  #     #   h1.attrs #=> [["class", "big"], ["id", "title"]]
+  #     #
+  #     # @!method attrs
+  #     # @return [Array<Array(String, String)>]
+  #
   #     # Returns the child elements that match the given CSS selector
   #     #
   #     # https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_selectors

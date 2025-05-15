@@ -1,7 +1,7 @@
 mod html_to_plain;
 
 use ego_tree::NodeId;
-use magnus::{function, method, prelude::*, Error, RArray, Ruby};
+use magnus::{function, method, prelude::*, Error, RArray, RString, Ruby};
 use scraper::{ElementRef, Html, Selector};
 use std::sync::{Arc, Mutex};
 
@@ -20,6 +20,7 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     element_class.define_method("html", method!(Element::html, 0))?;
     element_class.define_method("inner_html", method!(Element::inner_html, 0))?;
     element_class.define_method("attr", method!(Element::attr, 1))?;
+    element_class.define_method("attrs", method!(Element::attrs, 0))?;
     element_class.define_method("select", method!(Element::select, 1))?;
     element_class.define_method("child_elements", method!(Element::child_elements, 0))?;
     element_class.define_method("text", method!(Element::text, 0))?;
@@ -123,6 +124,16 @@ impl Element {
 
     fn attr(&self, attribute: String) -> Option<String> {
         self.with_element_ref(|element_ref| element_ref.attr(&attribute).map(ToString::to_string))
+    }
+
+    fn attrs(&self) -> RArray {
+        self.with_element_ref(|element_ref| {
+            element_ref
+                .value()
+                .attrs()
+                .map(|(key, value)| RArray::from_slice(&[RString::new(key), RString::new(value)]))
+                .collect()
+        })
     }
 
     fn select(&self, css_selector: String) -> Result<RArray, Error> {

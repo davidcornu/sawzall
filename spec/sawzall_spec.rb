@@ -140,6 +140,24 @@ RSpec.describe Sawzall do
       end
     end
 
+    describe "#attrs" do
+      it "returns an array of key-value pairs" do
+        doc = Sawzall.parse_fragment("<h1 id='heading' class='big' data-foo='bar'>Heading</h1>")
+
+        expect(doc.select("h1").first.attrs).to eq([
+          ["class", "big"],
+          ["data-foo", "bar"],
+          ["id", "heading"]
+        ])
+      end
+
+      it "returns an empty array if there are no attributes" do
+        doc = Sawzall.parse_fragment("<h1>Heading</h1>")
+
+        expect(doc.select("h1").first.attrs).to eq([])
+      end
+    end
+
     describe "#select" do
       it "returns elements that match the CSS selector" do
         doc = Sawzall.parse_document(sample_document)
