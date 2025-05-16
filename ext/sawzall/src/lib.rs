@@ -1,8 +1,13 @@
 mod html_to_plain;
 
 use ego_tree::NodeId;
-use magnus::{function, method, prelude::*, Error, RArray, RString, Ruby};
-use scraper::{ElementRef, Html, Selector};
+use magnus::{
+    function, method,
+    prelude::*,
+    scan_args::{get_kwargs, scan_args},
+    Error, RArray, RString, Ruby, Value,
+};
+use scraper::{CaseSensitivity, ElementRef, Html, Selector};
 use std::sync::{Arc, Mutex};
 
 #[magnus::init]
@@ -24,6 +29,8 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     element_class.define_method("select", method!(Element::select, 1))?;
     element_class.define_method("child_elements", method!(Element::child_elements, 0))?;
     element_class.define_method("text", method!(Element::text, 0))?;
+    element_class.define_method("has_class?", method!(Element::has_class, -1))?;
+    element_class.define_method("classes", method!(Element::classes, 0))?;
 
     Ok(())
 }
@@ -156,5 +163,28 @@ impl Element {
 
     fn text(&self) -> String {
         self.with_element_ref(html_to_plain::html_to_plain)
+    }
+
+    fn has_class(&self, args: &[Value]) -> Result<bool, Error> {
+        let args = scan_args::<_, (), (), (), _, ()>(args)?;
+        let (class,): (String,) = args.required;
+        let kwargs = get_kwargs::<_, (), _, ()>(args.keywords, &[], &["case_sensitive"])?;
+        let (case_sensitive,): (Option<bool>,) = kwargs.optional;
+
+        let case_sensitivity = if case_sensitive.unwrap_or(true) {
+            CaseSensitivity::CaseSensitive
+        } else {
+            CaseSensitivity::AsciiCaseInsensitive
+        };
+
+        Ok(self.with_element_ref(|element_ref| {
+            element_ref.value().has_class(&class, case_sensitivity)
+        }))
+    }
+
+    fn classes(&self) -> RArray {
+        self.with_element_ref(|element_ref| {
+            element_ref.value().classes().map(RString::new).collect()
+        })
     }
 }

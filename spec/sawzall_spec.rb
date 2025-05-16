@@ -209,6 +209,33 @@ RSpec.describe Sawzall do
       end
     end
 
+    describe "#has_class?" do
+      it "returns true if the element has the given class" do
+        doc = Sawzall.parse_fragment("<h1 class='one two Élément'>Heading</h1>")
+        h1 = doc.select("h1").first
+
+        expect(h1).to have_class("one")
+        expect(h1).to have_class("OnE", case_sensitive: false)
+        expect(h1).not_to have_class("three")
+
+        # Case-insensitive matching is ASCII-only
+        expect(h1).to have_class("Élément")
+        expect(h1).not_to have_class("élément", case_sensitive: false)
+      end
+    end
+
+    describe "#classes" do
+      it "returns the element's classes" do
+        doc = Sawzall.parse_fragment(<<~HTML)
+          <h1 class="one two">Heading</h1>
+          <h2>Subheading</h1>
+        HTML
+
+        expect(doc.select("h1").first.classes).to eq(["one", "two"])
+        expect(doc.select("h2").first.classes).to eq([])
+      end
+    end
+
     describe "#inspect" do
       it "returns a string containing the name and children" do
         doc = Sawzall.parse_document(sample_document)

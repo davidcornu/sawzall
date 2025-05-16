@@ -192,7 +192,32 @@ module Sawzall
     # @!method text
     # @return [String]
 
-    # @!endgroup Debugging
+    # Checks whether the element has the given class
+    #
+    # @example
+    #   doc = Sawzall.parse_fragment("<h1 class='title'>Heading</h1>")
+    #   h1 = doc.select("h1").first
+    #   h1.has_class?("title") #=> true
+    #   h1.has_class?("TITLE", case_sensitive: false) #=> true
+    #   h1.has_class?("heading") #=> false
+    #
+    # @!method has_class?(css_class, case_sensitive: true)
+    # @param css_class [String]
+    # @param case_sensitive [Boolean]
+    #   Whether matching should be case sensitive. When `false`, only ASCII characters are matched case-insensitively.
+    # @return [Boolean]
+
+    # Returns the element's classes
+    #
+    # @example
+    #   doc = Sawzall.parse_fragment("<h1 class='one two'>Heading</h1>")
+    #   h1 = doc.select("h1").first
+    #   h1.classes #=> ["one", "two"]
+    #
+    # @!method classes
+    # @return [Array<String>]
+
+    # @!endgroup
 
     # @!group 2) Debugging
 
