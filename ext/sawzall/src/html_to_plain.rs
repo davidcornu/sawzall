@@ -6,7 +6,7 @@ use std::collections::HashSet;
 /// Set of block-level elements extracted from [MDN][1]
 ///
 /// [1]: https://developer.mozilla.org/en-US/docs/Web/HTML/Block-level_elements
-const BLOCK_LEVEL_ELEMENTS: [&'static str; 33] = [
+const BLOCK_LEVEL_ELEMENTS: [&str; 33] = [
     "address",
     "article",
     "aside",
@@ -44,7 +44,7 @@ const BLOCK_LEVEL_ELEMENTS: [&'static str; 33] = [
 
 lazy_static! {
     static ref BLOCK_LEVEL_ELEMENTS_SET: HashSet<&'static str> =
-        BLOCK_LEVEL_ELEMENTS.iter().map(|el| *el).collect();
+        BLOCK_LEVEL_ELEMENTS.iter().copied().collect();
 }
 
 fn is_block_element(name: &str) -> bool {
